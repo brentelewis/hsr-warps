@@ -105,10 +105,8 @@ four_star_drop2.pack()
 def submit():
 	if five_star_selected.get() == "Select a 5* Character":
 		messagebox.showerror("Error!", "Please select a 5* character.")
-	elif four_star_selected1.get() == "Select a 4* Character":
-		messagebox.showerror("Error!", "Please select a first 4* character.")
-	elif four_star_selected2.get() == "Select a 4* Character":
-		messagebox.showerror("Error!", "Please select a second 4* character.")
+	elif four_star_selected1.get() == "Select a 4* Character" or four_star_selected2.get() == "Select a 4* Character":
+		messagebox.showerror("Error!", "Please select two 4* characters.")
 	elif four_star_selected1.get() == four_star_selected2.get():
 		messagebox.showerror("Error!", "The selected 4* characters cannot be the same.")
 	else:
