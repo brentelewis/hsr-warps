@@ -28,7 +28,6 @@ with open("hsr-standard-info.csv", newline = "") as csvfile:
 		name = row["Name"]
 		standard_options[rarity][classification].append(name)
 standard_options = {rarity: dict(classification) for rarity, classification in standard_options.items()}
-print(standard_options)
 
 # Datatype of menu text 
 five_star_selected = StringVar()
