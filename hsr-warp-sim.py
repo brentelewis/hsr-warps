@@ -44,7 +44,7 @@ four_star_selected3.set("Select a 4* Character")
 
 # Create dropdown menus
 five_star_drop = OptionMenu(root, five_star_selected, *five_star_options) 
-five_star_drop.pack() 
+five_star_drop.pack()
 
 four_star_drop1 = OptionMenu(root, four_star_selected1, *standard_options["4"]["Character"])
 four_star_drop1.pack()
@@ -69,12 +69,14 @@ def submit():
 			   f"\n{four_star_selected1.get()}"
 			   f"\n{four_star_selected2.get()}"
 			   f"\n{four_star_selected3.get()}")
+		warp_button1 = Button(root, text = "WARP x1").pack()
+		warp_button1 = Button(root, text = "WARP x10").pack()
 
 # Create button, it will change label text 
 start_button = Button(root, text = "START", command = submit).pack()
 
 # Create Label 
-label = Label(root, text = " ")
+label = Label(root, text = " ", anchor = "w", justify = "left")
 label.pack()
 
 # Execute tkinter 
