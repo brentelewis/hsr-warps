@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import csv
 from collections import defaultdict
+import random
 
 # Create object 
 root = Tk() 
@@ -64,20 +65,57 @@ def submit():
 	elif four_star_selected1.get() == four_star_selected2.get() or four_star_selected1.get() == four_star_selected3.get() or four_star_selected2.get() == four_star_selected3.get():
 		messagebox.showerror("Error!", "The selected 4* characters cannot be the same.")
 	else:
-		label.config(text = f"YOUR BANNER:"
+		banner_label.config(text = f"YOUR BANNER:"
 			   f"\n{five_star_selected.get()}"
 			   f"\n{four_star_selected1.get()}"
 			   f"\n{four_star_selected2.get()}"
 			   f"\n{four_star_selected3.get()}")
-		warp_button1 = Button(root, text = "WARP x1").pack()
-		warp_button1 = Button(root, text = "WARP x10").pack()
+		warp_button1 = Button(root, text = "WARP x1", command = warp).pack()
+		warp_button1 = Button(root, text = "WARP x10", command = warp_10).pack()
+
+def warp():
+	base_outcomes = ["5", "4", "3"]
+	base_probabilities = [0.006, 0.051, 0.943]
+	guaranteed_outcomes = ["5", "4"]
+	guaranteed_probabilities = [0.006, .994]
+
+	result = random.choices(base_outcomes, base_probabilities)[0]
+	if result == "3":
+		result = random.choice(standard_options["3"]["Light Cone"])
+	elif result == "4":
+		if random.choice([0, 1]) == 0:
+			result = random.choice(standard_options["4"]["Character"])
+		else:
+			result = random.choice(standard_options["4"]["Light Cone"])
+	else:
+		if random.choice([0, 1]) == 0:
+			result = five_star_selected.get()
+		else:
+			result = random.choice(standard_options["5"]["Character"])
+
+	current_text = results_label.cget("text")
+	lines = current_text.splitlines()
+	new_line = result
+	lines.insert(0, new_line)
+	if len(lines) > 10:
+		lines.pop()
+	new_text = "\n".join(lines)
+	results_label.config(text = new_text)
+	
+
+def warp_10():
+	for _ in range(10):
+		warp()
 
 # Create button, it will change label text 
 start_button = Button(root, text = "START", command = submit).pack()
 
-# Create Label 
-label = Label(root, text = " ", anchor = "w", justify = "left")
-label.pack()
+# Create Labels
+banner_label = Label(root, text = " ", anchor = "w", justify = "left")
+banner_label.pack()
+
+results_label = Label(root, text = " ", anchor = "w", justify = "left")
+results_label.pack()
 
 # Execute tkinter 
 root.mainloop()
