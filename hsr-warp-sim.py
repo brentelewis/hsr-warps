@@ -99,15 +99,15 @@ def warp(l):
 
 	if l[1] == 89:
 		if l[3] == True:
-			result = f'!!!!{five_star_selected.get()}!!!!'
+			result = f'****{five_star_selected.get()}****'
 			l[3] = False
 		else:
 			roll = random.choice([0, 1])
 			if roll == 0:
-				result = f'!!!!{five_star_selected.get()}!!!!'
+				result = f'****{five_star_selected.get()}****'
 				l[3] = False
 			else:
-				result = f'!!!!{random.choice(standard_options["5"]["Character"])}!!!!'
+				result = f'****{random.choice(standard_options["5"]["Character"])}****'
 				l[3] = True
 		l[1] = 0
 		l[2] = 0
@@ -130,15 +130,15 @@ def warp(l):
 			l[2] = 0
 		else:
 			if l[3] == True:
-				result = result = f'!!!!{five_star_selected.get()}!!!!'
+				result = result = f'****{five_star_selected.get()}****'
 				l[3] = False
 			else:
 				roll = random.choice([0, 1])
 				if roll == 0:
-					result = result = f'!!!!{five_star_selected.get()}!!!!'
+					result = result = f'****{five_star_selected.get()}****'
 					l[3] = False
 				else:
-					result = f'!!!!{random.choice(standard_options["5"]["Character"])}!!!!'
+					result = f'****{random.choice(standard_options["5"]["Character"])}****'
 					l[3] = True
 			l[1] = 0
 			l[2] = 0
@@ -165,25 +165,25 @@ def warp(l):
 			l[2] = 0
 		else:
 			if l[3] == True:
-				result = f'!!!!{five_star_selected.get()}!!!!'
+				result = f'****{five_star_selected.get()}****'
 				l[3] = False
 			else:
 				if random.choice([0, 1]) == 0:
-					result = f'!!!!{five_star_selected.get()}!!!!'
+					result = f'****{five_star_selected.get()}****'
 					l[3] = False
 				else:
-					result = f'!!!!{random.choice(standard_options["5"]["Character"])}!!!!'
+					result = f'****{random.choice(standard_options["5"]["Character"])}****'
 					l[3] = True
 
 			l[1] = 0
 			l[2] = 0
 	l[0] += 1
 	
-	print(result, l)
+	#print(result, l)
 	max_lines = 10
 	current_text = results_label.cget("text")
 	lines = current_text.splitlines()
-	new_line = result
+	new_line = f"{result}, Pull: {l[0]}, 5* Pity: {l[1]}, 4* Pity: {l[2]}"
 	lines.insert(0, new_line)
 	if len(lines) > max_lines:
 		lines.pop()
