@@ -18,6 +18,10 @@ limited_guarantee = False
 selected_4_guarantee = False
 args = [num_pulls, pity_5, pity_4, limited_guarantee, selected_4_guarantee]
 
+# Create constants representing pities
+MAX_FIVE_STAR_PITY = 90
+MAX_FOUR_STAR_PITY = 10
+
 # Dropdown menu options
 # Create a list of 5* limited character options
 five_star_options = []
@@ -84,7 +88,7 @@ def submit():
 			   f'\n{four_star_selected1.get()}'
 			   f'\n{four_star_selected2.get()}'
 			   f'\n{four_star_selected3.get()}')
-
+		
 # The single warp function
 def warp(l):
 	# Important probability variables
@@ -98,6 +102,56 @@ def warp(l):
 	
 	# Initialize an updated list of 4* units
 	updated_four_star_list = standard_options["4"]["Character"]
+
+	def roll_3(l):
+		result = random.choice(standard_options["3"]["Light Cone"])
+		l[1] += 1 # Increment 5* pity
+		l[2] += 1 # Increment 4* pity
+		return l, result
+
+	def roll_4(l):
+		if l[4] == True:
+			result = random.choice(selected_four_stars_list)
+			l[4] = False # Set 4* guarantee to False
+		# Else, there is a 50/50 chance to get a selected 4* unit or on of the chosen 4* units
+		else:
+			# If it rolls a 0, result is a random 4* unit chosen by user
+			if random.choice([0, 1]) == 0:
+				result = random.choice(selected_four_stars_list)
+				l[4] = False # Set 4* guarantee to False
+			# Else, result is a random 4* unit, 50/50 chance for character or light cone
+			else:
+				# If it rolls a 0, result is a random 4* character
+				if random.choice([0, 1]) == 0:
+					result = random.choice(updated_four_star_list)
+				# Else, result is a random 4* light cone
+				else:
+					result = random.choice(standard_options["4"]["Light Cone"])
+				l[4] = True # Set 4* guarantee to True
+		l[1] += 1 # Increment 5* pity
+		l[2] = 0 # Set 4* pity to 0
+
+		return l, result
+	
+	def roll_5(l):
+		# If 5* guarantee is True, result is the selected 5* character
+		if l[3] == True:
+			result = result = f'****{five_star_selected.get()}****'
+			l[3] = False # Set 5* guarantee to False
+		# Else, If 5* guarantee is False
+		else:
+			# If it rolls a 0, result is the selected 5* character
+			if random.choice([0, 1]) == 0:
+				result = result = f'****{five_star_selected.get()}****'
+				l[3] = False # Set 5* guarantee to False
+			# If it rolls a 1, result is a random 5* standard character
+			else:
+				result = f'****{random.choice(standard_options["5"]["Character"])}****'
+				l[3] = True # Set 5* guarantee to True
+		l[1] = 0 # Set 5* pity to 0
+		l[2] = 0 # Set 4* pity to 0
+
+		return l, result
 	
 	# If this is the first pull, remove the selected characters from the updated list of 4* units
 	if l[0] == 0:
@@ -106,127 +160,35 @@ def warp(l):
 		updated_four_star_list.remove(four_star_selected3.get())	
 
 	# If user hits 90 pity aka guaranteed 5* character...
-	if l[1] == 89:
-		# If their selected character is guaranteed, result is the selected 5* character
-		if l[3] == True:
-			result = f'****{five_star_selected.get()}****'
-			l[3] = False # Set the 5* guarantee value to False
-		# Else, there is a 50/50 chance to get the selected character or a random standard 5*
-		else: 
-			# If it rolls a 0, result is the selected 5*
-			if random.choice([0, 1]) == 0:
-				result = f'****{five_star_selected.get()}****'
-				l[3] = False # Set 5* guarantee to False
-			# Else, the result is a random 5* standard character
-			else:
-				result = f'****{random.choice(standard_options["5"]["Character"])}****'
-				l[3] = True # Set 5* guarantee to True
-		l[1] = 0 # Set 5* pity to 0
-		l[2] = 0 # Set 4* pity to 0
+	if l[1] == MAX_FIVE_STAR_PITY - 1:
+		l, result = roll_5(l)
 
 	# If user hits 10 pity, aka guaranteed at least 4* unit...
-	elif l[2] == 9:
+	elif l[2] == MAX_FOUR_STAR_PITY - 1:
 		# Set result to either a 4 or 5, depending on probabilities
-		result = random.choices(guaranteed_outcomes, guaranteed_probabilities)[0]
+		roll = random.choices(guaranteed_outcomes, guaranteed_probabilities)[0]
 		# If result is a 4...
-		if result == "4":
-			# If 4* guarantee is True, set result to a random 4* unit chosen by user
-			if l[4] == True:
-				result = random.choice(selected_four_stars_list)
-				l[4] = False # Set 4* guarantee to False
-			# Else, there is a 50/50 chance to get a selected 4* unit or on of the chosen 4* units
-			else:
-				# If it rolls a 0, result is a random 4* unit chosen by user
-				if random.choice([0, 1]) == 0:
-					result = random.choice(selected_four_stars_list)
-					l[4] = False # Set 4* guarantee to False
-				# Else, result is a random 4* unit, 50/50 chance for character or light cone
-				else:
-					# If it rolls a 0, result is a random 4* character
-					if random.choice([0, 1]) == 0:
-						result = random.choice(updated_four_star_list)
-					# Else, result is a random 4* light cone
-					else:
-						result = random.choice(standard_options["4"]["Light Cone"])
-					l[4] = True # Set 4* guarantee to True
-			l[1] += 1 # Increment 5* pity
-			l[2] = 0 # Set 4* pity to 0
-		
+		if roll == "4":
+			l, result = roll_4(l)
 		# Else, if result is a 5
 		else:
-			# If 5* guarantee is True, result is the selected 5* character
-			if l[3] == True:
-				result = result = f'****{five_star_selected.get()}****'
-				l[3] = False # Set 5* guarantee to False
-			# Else, If 5* guarantee is False
-			else:
-				# If it rolls a 0, result is the selected 5* character
-				if random.choice([0, 1]) == 0:
-					result = result = f'****{five_star_selected.get()}****'
-					l[3] = False # Set 5* guarantee to False
-				# If it rolls a 1, result is a random 5* standard character
-				else:
-					result = f'****{random.choice(standard_options["5"]["Character"])}****'
-					l[3] = True # Set 5* guarantee to True
-			l[1] = 0 # Set 5* pity to 0
-			l[2] = 0 # Set 4* pity to 0
+			l, result = roll_5(l)
 
 	# If a 4* or 5* is not guaranteed...
 	else:
 		# Randomly choose 3, 4, or 5 based on probabilities
-		result = random.choices(base_outcomes, base_probabilities)[0]
+		roll = random.choices(base_outcomes, base_probabilities)[0]
 		# If it rolls a 3, result is a random 3* light cone
-		if result == "3":
-			result = random.choice(standard_options["3"]["Light Cone"])
-			l[1] += 1 # Increment 5* pity
-			l[2] += 1 # Increment 4* pity
-		
+		if roll == "3":
+			l, result = roll_3(l)
 		# If it rolls a 4...
-		elif result == "4":
-			# If 4* guarantee is True, result is one of the chosen 4* characters
-			if l[4] == True:
-				result = random.choice(selected_four_stars_list)
-				l[4] = False # Set 4* guarantee to False
-			# If 4* guarantee is False...
-			else:
-				# If it rolls a 0, result is one of the chosen 4* characters
-				if random.choice([0, 1]) == 0:
-					result = random.choice(selected_four_stars_list)
-					l[4] = False # Set 4* guarantee to False
-				# If it rolls a 1, 50/50 chance for result to be 4* character or light cone
-				else:
-					# If it rolls a 0, result is a random 4* character
-					if random.choice([0, 1]) == 0:
-						result = random.choice(updated_four_star_list)
-					# If it rolls a 1, result is a random 4* light cone
-					else:
-						result = random.choice(standard_options["4"]["Light Cone"])
-					l[4] = True	# Set 4* guarantee to True
-			l[1] += 1 # Increment 5* pity
-			l[2] = 0 # Set 4* pity to 0
-		
+		elif roll == "4":
+			l, result = roll_4(l)
 		# If it rolls a 5...
 		else:
-			# If 5* guarantee is True, result is the selected 5* character
-			if l[3] == True:
-				result = f'****{five_star_selected.get()}****'
-				l[3] = False # Set 5* guarantee to False
-			# If 5* guarantee is False, 50/50 chance for result to be the selected 5* character or a random 5* standard character
-			else:
-				# If it rolls a 0, result is the selected 5* character
-				if random.choice([0, 1]) == 0:
-					result = f'****{five_star_selected.get()}****'
-					l[3] = False # Set 5* guarantee to False
-				# If it rolls a 1, result is a random standard character
-				else:
-					result = f'****{random.choice(standard_options["5"]["Character"])}****'
-					l[3] = True # Set 5* guarantee to True
-
-			l[1] = 0 # Set 5* pity to 0
-			l[2] = 0 # Set 4* pity to 0
+			l, result = roll_5(l)
 	l[0] += 1 # Increment number of pulls
-	
-	#print(result, l)
+
 	# Keep the max lines of text in the results label to 10
 	max_lines = 10
 	current_text = results_label.cget("text")
