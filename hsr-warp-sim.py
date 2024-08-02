@@ -4,6 +4,13 @@ import csv
 from collections import defaultdict
 import random
 
+'''
+SOFT PITY CALCULATION:
+Pulls 1-73: R = .006
+Pulls 74-89: R = 0.006 + .06 * (N - 73)
+Pull 90: R = 100% (Guaranteed)
+'''
+
 # Create object 
 root = Tk() 
 
