@@ -4,13 +4,6 @@ import csv
 from collections import defaultdict
 import random
 
-'''
-SOFT PITY CALCULATION:
-Pulls 1-73: R = .006
-Pulls 74-89: R = 0.006 + .06 * (N - 73)
-Pull 90: R = 100% (Guaranteed)
-'''
-
 # Create object 
 root = Tk() 
 
@@ -98,11 +91,17 @@ def submit():
 		
 # The single warp function
 def warp(l):
+	# Soft pity system
+	if l[1] <= 73: 
+		five_star_probability = .006
+	else:
+		five_star_probability = .006 + .06 * (l[1] - 73)
+
 	# Important probability variables
 	base_outcomes = ["5", "4", "3"]
-	base_probabilities = [0.006, 0.051, 0.943]
+	base_probabilities = [five_star_probability, 0.051, 0.943]
 	guaranteed_outcomes = ["5", "4"]
-	guaranteed_probabilities = [0.006, .994]
+	guaranteed_probabilities = [five_star_probability, .994]
 	
 	# A list of the selected 4* units
 	selected_four_stars_list = [four_star_selected1.get(), four_star_selected2.get(), four_star_selected3.get()]
